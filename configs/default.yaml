@@ -1,0 +1,162 @@
+# Configuration from the reported five-stage run, with portable paths.
+seed: 42
+output_dir: output/bcct_paper
+cache_dir: cache
+data:
+  image_size: 224
+  preprocessing_version: 2
+  mean: null
+  std: null
+  interpolation: bicubic
+  num_workers: 4
+  pin_memory: false
+  tasks:
+  - name: AID
+    root: data/AID
+    train_split: train
+    test_split: test
+  - name: NWPU
+    root: data/NWPU
+    train_split: train
+    test_split: test
+  - name: PatternNet
+    root: data/PatternNet
+    train_split: train
+    test_split: test
+  - name: RSI
+    root: data/RSI
+    train_split: train
+    test_split: test
+  - name: UCM
+    root: data/UCM
+    train_split: train
+    test_split: test
+backbone:
+  type: vit_b16_in21k
+  amp: false
+  vit_b16_in21k:
+    model_name: vit_base_patch16_224.augreg_in21k
+    pretrained: true
+    weights_path: null
+    amp: false
+    feature_pooling: cls
+  dinov3:
+    model_name: dinov3_vitl16
+    weights_tag: SAT493M
+    weights_path: null
+    config_path: null
+    timm_model_name: vit_large_patch16_dinov3.sat493m
+    amp: false
+    feature_pooling: cls_patch_concat
+feature_cache:
+  enabled: true
+  overwrite: false
+  batch_size: 32
+  augmentation_views: 1
+statistics:
+  class_rank: 32
+  min_eigenvalue: 1.0e-05
+transport:
+  enabled: true
+  domain_rank: 24
+  probe_dim: 48
+  min_bridges: 2
+  bw_steps: 120
+  bw_lr: 0.03
+  identity_reg: 0.01
+  mean_geometry_weight: 0.1
+  min_scale: 0.25
+  max_scale: 4.0
+  eps: 1.0e-05
+feature_adapter:
+  enabled: true
+  bottleneck_dim: 256
+  stages: 2
+  epochs: 30
+  batch_size: 256
+  lr: 0.001
+  weight_decay: 0.0001
+  feature_dropout: 0.05
+  noise_std: 0.002
+  contrastive_lambda: 0.02
+  temperature: 0.1
+  classifier_scale: 20.0
+  angular_margin: 0.02
+router:
+  hidden_dim: 256
+  epochs: 30
+  batch_size: 128
+  lr: 0.001
+  weight_decay: 0.0001
+  samples_per_domain: 2048
+  temperature: 0.35
+  hard_inference: false
+  inference_mode: semantic_mixture
+  semantic_weight: 0.5
+  semantic_temperature: 0.05
+  class_keys_per_class: 8
+  class_key_neighbors: 2
+  class_key_iterations: 10
+  class_key_max_samples: 2048
+  key_space: raw
+  key_count: 768
+  key_iterations: 15
+  key_max_samples: 16384
+  key_neighbors: 2
+  key_temperature: 0.02
+  key_hard_inference: false
+classifier:
+  scale: 20.0
+  epochs_first: 30
+  epochs_incremental: 25
+  batch_size: 128
+  lr: 0.003
+  weight_decay: 0.0001
+  robust_lambda: 0.5
+  robust_margin: 0.2
+  robust_rho: 1.0
+  replay_per_old_class: 64
+  bridge_replay_per_class: 256
+  class_balanced_sampling: true
+  old_weight_anchor_lambda: 0.5
+  freeze_absent_old_classes: true
+domain_evidence:
+  enabled: true
+  mode: shrinkage_lda
+  covariance_shrinkage_candidates:
+  - 0.03
+  - 0.1
+  - 0.3
+  temperature_candidates:
+  - 0.5
+  - 1.0
+  - 2.0
+  - 4.0
+  - 8.0
+  - 16.0
+  - 32.0
+  variance_shrinkage: 0.2
+  precision_clip: 8.0
+  hidden_dim: 0
+  dropout: 0.0
+  epochs: 25
+  batch_size: 256
+  lr: 0.003
+  weight_decay: 0.0001
+  label_smoothing: 0.0
+  scale: 20.0
+  blend_weight: 0.35
+  calibration_fraction: 0.1
+  calibration_metric: nll
+  blend_candidates:
+  - 0.0
+  - 0.1
+  - 0.2
+  - 0.35
+  - 0.5
+  - 0.65
+  - 0.8
+  - 0.9
+eval:
+  batch_size: 64
+  report_per_task: true
