@@ -45,11 +45,11 @@ python scripts/inspect_tasks.py --config configs/paper.yaml
 
 ## Training and evaluation
 
-[`configs/paper.yaml`](configs/paper.yaml) records the settings saved with the final checkpoint for the main results, with local paths replaced by portable defaults. The frozen backbone is ImageNet-21K-pretrained ViT-B/16 using CLS features. The config uses timm to load the pretrained weights. For offline use, set `backbone.vit_b16_in21k.weights_path` to a local compatible checkpoint. The legacy `configs/default.yaml` contains local paths and different ablation settings.
+[`configs/default.yaml`] records the settings saved with the final checkpoint for the main results, with local paths replaced by portable defaults. The frozen backbone is ImageNet-21K-pretrained ViT-B/16 using CLS features. The config uses timm to load the pretrained weights. For offline use, set `backbone.vit_b16_in21k.weights_path` to a local compatible checkpoint. The legacy `configs/default.yaml` contains local paths and different ablation settings.
 
 ```bash
-python train.py --config configs/paper.yaml
-python tests/test.py --config configs/paper.yaml --checkpoint output/bcct_paper/task_04_UCM.pt
+python train.py --config configs/default.yaml
+python tests/test.py --config configs/default.yaml --checkpoint output/bcct_paper/task_04_UCM.pt
 ```
 
 Training writes each stage's checkpoint, `metrics.txt`, and `class_registry.json` to `output/bcct_paper/`. Evaluation covers every domain seen by the loaded checkpoint, with predictions over the cumulative class set. To resume from an intermediate checkpoint, pass `--resume` and its path to `train.py`.
